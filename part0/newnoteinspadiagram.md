@@ -8,5 +8,5 @@ sequenceDiagram
     server-->>browser: JSON document
     deactivate server
 
-    Note: Pushing the new note into the JSON document and then redrawing the notes without refreshing the page
+    Note right of browser: Pushing the new note into the JSON document and then redrawing the notes without refreshing the page
 ```
