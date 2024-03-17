@@ -12,9 +12,16 @@ const Statistics = ({good, neutral, bad}) => {
   const positive = (good / totalFeedback) * 100
   console.log((isNaN(positive)))
 
+  if (totalFeedback === 0){
+    return (
+      <>
+        No feedback given
+      </>
+    )
+  }
+
   return (
     <>
-      <h1>Statistics</h1>
       <Feedback number={good} text="Good"/>
       <Feedback number={neutral} text="Neutral"/>
       <Feedback number={bad} text="Bad"/>
@@ -61,6 +68,7 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text="Neutral" />
       <Button handleClick={handleBadClick} text="Bad" />
 
+      <h1>Statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </>
   )
