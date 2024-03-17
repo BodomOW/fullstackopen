@@ -1,8 +1,29 @@
 import { useState } from 'react'
 
-const Display = props => {
+const Feedback = props => {
   return (
     <div>{props.text} {props.number}</div>
+  )
+}
+
+const Statistics = ({good, neutral, bad}) => {
+  const totalFeedback = good + neutral + bad
+  const avg = totalFeedback / 3
+  const positive = (good / totalFeedback) * 100
+  console.log((isNaN(positive)))
+
+  return (
+    <>
+      <h1>Statistics</h1>
+      <Feedback number={good} text="Good"/>
+      <Feedback number={neutral} text="Neutral"/>
+      <Feedback number={bad} text="Bad"/>
+      <span>All {totalFeedback}</span>
+      <br />
+      <span>Average {avg}</span>
+      <br />
+      <span>Positive percentage {isNaN(positive) ? '0' : positive} %</span>
+    </>
   )
 }
 
@@ -17,10 +38,6 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-
-  const totalFeedback = good + neutral + bad
-  const avg = totalFeedback / 3
-  const positive = (good / totalFeedback) * 100
 
   const handleGoodClick = () => {
     const updatedGood = good + 1
@@ -44,18 +61,7 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text="Neutral" />
       <Button handleClick={handleBadClick} text="Bad" />
 
-      <br />
-
-      <h1>Statistics</h1>
-      <Display number={good} text="Good"/>
-      <Display number={neutral} text="Neutral"/>
-      <Display number={bad} text="Bad"/>
-
-      <span>All {totalFeedback}</span>
-      <br />
-      <span>Average {avg}</span>
-      <br />
-      <span>Positive percentage {positive}%</span>
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </>
   )
 }
