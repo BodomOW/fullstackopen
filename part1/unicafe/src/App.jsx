@@ -8,7 +8,14 @@ const Feedback = props => {
 
 const Statistics = ({good, neutral, bad}) => {
   const totalFeedback = good + neutral + bad
-  const avg = totalFeedback / 3
+
+  const goodPoints = good
+  const badPoints = -bad
+  console.log('Bad Points value: ', badPoints)
+  const totalPoints = goodPoints + badPoints
+  console.log('Total Points value: ',totalPoints)
+  const avg = totalPoints / totalFeedback
+
   const positive = (good / totalFeedback) * 100
   console.log((isNaN(positive)))
 
