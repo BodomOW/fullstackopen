@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-const Feedback = props => {
+const StatisticLine = props => {
   return (
-    <div>{props.text} {props.number}</div>
+    <div>{props.text} {props.value}</div>
   )
 }
 
@@ -11,13 +11,10 @@ const Statistics = ({good, neutral, bad}) => {
 
   const goodPoints = good
   const badPoints = -bad
-  console.log('Bad Points value: ', badPoints)
   const totalPoints = goodPoints + badPoints
-  console.log('Total Points value: ',totalPoints)
   const avg = totalPoints / totalFeedback
 
   const positive = (good / totalFeedback) * 100
-  console.log((isNaN(positive)))
 
   if (totalFeedback === 0){
     return (
@@ -29,14 +26,12 @@ const Statistics = ({good, neutral, bad}) => {
 
   return (
     <>
-      <Feedback number={good} text="Good"/>
-      <Feedback number={neutral} text="Neutral"/>
-      <Feedback number={bad} text="Bad"/>
-      <span>All {totalFeedback}</span>
-      <br />
-      <span>Average {avg}</span>
-      <br />
-      <span>Positive percentage {isNaN(positive) ? '0' : positive} %</span>
+      <StatisticLine text="Good" value={good} />
+      <StatisticLine text="Neutral" value={neutral}/>
+      <StatisticLine text="Bad" value={bad}/>
+      <StatisticLine text="All" value={totalFeedback}/>
+      <StatisticLine text="Average" value={avg}/>
+      <StatisticLine text="Positive percentage" value={`${positive} %`}/>
     </>
   )
 }
