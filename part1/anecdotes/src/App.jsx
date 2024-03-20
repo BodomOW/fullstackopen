@@ -19,6 +19,20 @@ const App = () => {
   const [selected, setSelected] = useState(0)
   const [anecdoteArr, setAnecdoteArr] = useState(anecdotes)
 
+  let mostVotedPosition = 0
+  let mostVotedValue = 0
+
+  const getMostVotedAnecdote = () => {
+    anecdoteArr.map(anecdote => {
+      const valueVote = anecdote.votes
+      if (valueVote > mostVotedValue) {
+        mostVotedPosition = anecdote.id
+      }
+      mostVotedValue = Math.max(mostVotedValue, valueVote)
+    })
+    console.log(`Most voted anecdote position is: ${mostVotedPosition}, total votes: ${mostVotedValue}`)
+  }
+
   const handleVote = () => {
     setAnecdoteArr(anecdoteArr.map(anecdote => {
       if (anecdote.id === selected) {
@@ -38,11 +52,18 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected].text}
       <div>has {anecdoteArr[selected].votes} votes</div>
       <br />
       <button onClick={handleVote}>vote</button>
       <button onClick={handleRandomAnecdote}>next anecdote</button>
+      <br />
+
+      <h1>Anecdote with most votes</h1>
+      {getMostVotedAnecdote()}
+      {anecdotes[mostVotedPosition].text}
+      <div>has {anecdoteArr[mostVotedPosition].votes} votes</div>
     </div>
   )
 }
