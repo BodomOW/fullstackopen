@@ -1,21 +1,28 @@
 const Course = ({ course }) => {
   // console.log(course.name)
-  // console.log(course.parts)
+  // console.log("course.parts", course.parts)
+
+  const totalExercices = course.parts.reduce((accumulator, part) => {
+    console.log(part.exercises)
+    return accumulator += part.exercises
+  }, 0)
+  console.log("totalExercices", totalExercices)
+  
   return (
     <>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      {/* <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} /> */}
+      <Total sum={totalExercices} />
     </>
   )
 }
 
 const Header = ({ course }) => <h1>{course}</h1>
 
-const Total = ({ sum }) => <p>Number of exercises {sum}</p>
+const Total = ({ sum }) => <b>Total of exercises {sum}</b>
 
 const Part = ({ part }) => {
-  console.log('Component Part', part)
+  // console.log('Component Part', part)
   return (
     <p>
       {part.name} {part.exercises}
@@ -24,7 +31,7 @@ const Part = ({ part }) => {
 }
 
 const Content = ({ parts }) => {
-  console.log('Component Content', parts)
+  // console.log('Component Content', parts)
   return (
     <>
       {parts.map(part =>
@@ -36,7 +43,6 @@ const Content = ({ parts }) => {
     </>
   )
 }
-
 
 const App = () => {
   const course = {
@@ -59,15 +65,10 @@ const App = () => {
         id: 3
       },
       {
-        name: 'Another Part',
-        exercises: 5,
+        name: 'Redux',
+        exercises: 11,
         id: 4
       },
-      {
-        name: 'Extra Part',
-        exercises: 24,
-        id: 5
-      }
     ]
   }
 
