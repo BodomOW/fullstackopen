@@ -2,10 +2,21 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { id: 1, name: 'Arto Hellas', number: '040-1234567'}
+    { name: 'Arto Hellas', number: '040-1234567', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
+  const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [showAll, setShowAll] = useState(false)
+
+  const re = RegExp(`.*${newFilter.toLowerCase().split('').join('.*')}.*`)
+
+  const personsToShow = showAll
+  ? persons
+  : persons.filter(person => person.name.toLowerCase().match(re))
 
   const addName = (event) => {
     event.preventDefault()
@@ -32,19 +43,25 @@ const App = () => {
     setNewNumber('')
   }
 
+  const handleFilterChange = (event) => {
+    setNewFilter(event.target.value)
+  }
+
   const handleNameChange = (event) => {
-    // console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    // console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        <label for='filter'>filter shown with</label>
+        <input id="filter" type="text" value={newFilter} onChange={handleFilterChange} />
+      </div>
       <form onSubmit={addName}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -60,7 +77,7 @@ const App = () => {
       <h2>Numbers</h2>
       <ul style={{ padding: "0" }}>
         {
-          persons.map(person => <li key={person.id} style={{ listStyleType: "none" }}>{person.name} {person.number}</li>)
+          personsToShow.map(person => <li key={person.id} style={{ listStyleType: "none" }}>{person.name} {person.number}</li>)
         }
       </ul>
     </div>
