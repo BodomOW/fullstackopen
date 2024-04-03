@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-1234567', id: 1 },
@@ -18,7 +22,7 @@ const App = () => {
     ? persons
     : persons.filter(person => person.name.toLowerCase().match(re))
 
-  const addName = (event) => {
+  const handleAddPerson = (event) => {
     event.preventDefault()
 
     let lastPerson = persons.slice(-1);
@@ -28,8 +32,6 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-
-    console.log(personObject.id)
 
     // Checks whether an element is duplicated
     const checkDuplicate = (element) => element.name === personObject.name;
@@ -46,8 +48,6 @@ const App = () => {
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
 
-    // console.log(event.target.value)
-    
     if (event.target.value === '') {
       return setShowAll(true)
     }
@@ -66,27 +66,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with<input type="text" value={newFilter} onChange={handleFilterChange} />
-      </div>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>number: <input value={newNumber} onChange={handleNumberChange} /></div>
+      <Filter value={newFilter} handleFilterChange={handleFilterChange} />
 
-        <div>
-          <button type="submit">add</button>
-        </div>
+      <h3>Add a new</h3>
 
-      </form>
+      <PersonForm 
+        handleSubmit={handleAddPerson} name={newName} number={newNumber} 
+        handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} 
+      />
 
-      <h2>Numbers</h2>
-      <ul style={{ padding: "0" }}>
-        {
-          personsToShow.map(person => <li key={person.id} style={{ listStyleType: "none" }}>{person.name} {person.number}</li>)
-        }
-      </ul>
+      <h3>Numbers</h3>
+      
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
