@@ -10,13 +10,13 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(true)
 
   const re = RegExp(`.*${newFilter.toLowerCase().split('').join('.*')}.*`)
 
   const personsToShow = showAll
-  ? persons
-  : persons.filter(person => person.name.toLowerCase().match(re))
+    ? persons
+    : persons.filter(person => person.name.toLowerCase().match(re))
 
   const addName = (event) => {
     event.preventDefault()
@@ -45,6 +45,14 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
+
+    // console.log(event.target.value)
+    
+    if (event.target.value === '') {
+      return setShowAll(true)
+    }
+
+    setShowAll(false)
   }
 
   const handleNameChange = (event) => {
@@ -59,8 +67,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <div>
-        <label for='filter'>filter shown with</label>
-        <input id="filter" type="text" value={newFilter} onChange={handleFilterChange} />
+        filter shown with<input type="text" value={newFilter} onChange={handleFilterChange} />
       </div>
       <form onSubmit={addName}>
         <div>
