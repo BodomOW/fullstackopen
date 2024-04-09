@@ -28,9 +28,7 @@ const App = () => {
     : persons.filter(person => person.name.toLowerCase().match(re))
 
   const handleAddPerson = event => {
-    event.preventDefault()
-
-
+    // event.preventDefault()
     const personObject = {
       name: newName,
       number: newNumber
@@ -41,6 +39,7 @@ const App = () => {
 
     if (persons.some(checkDuplicate)) {
       alert(`${personObject.name} is already added to the phonebook`)
+      return
     }
 
     personService
@@ -50,7 +49,15 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+  }
 
+  const handleDeletePerson = (id, name) => {
+    console.log('Person id to remove: ', id)
+    console.log('Person name to remove: ', name)
+    window.confirm(`Delete ${name} ?`)
+    personService
+      .remove(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
   }
 
   const handleFilterChange = (event) => {
@@ -85,7 +92,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDeletePerson={handleDeletePerson} />
     </div>
   )
 }
