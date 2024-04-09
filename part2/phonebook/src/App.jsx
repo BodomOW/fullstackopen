@@ -30,10 +30,8 @@ const App = () => {
   const handleAddPerson = event => {
     event.preventDefault()
 
-    let lastPerson = persons.slice(-1);
 
     const personObject = {
-      id: lastPerson[0].id + 1,
       name: newName,
       number: newNumber
     }
