@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -13,15 +14,12 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll('http://localhost:3001/persons')
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
-  console.log('render', persons.length, 'persons')
 
   const re = RegExp(`.*${newFilter.toLowerCase().split('').join('.*')}.*`)
 
@@ -29,7 +27,7 @@ const App = () => {
     ? persons
     : persons.filter(person => person.name.toLowerCase().match(re))
 
-  const handleAddPerson = (event) => {
+  const handleAddPerson = event => {
     event.preventDefault()
 
     let lastPerson = persons.slice(-1);
@@ -47,9 +45,14 @@ const App = () => {
       alert(`${personObject.name} is already added to the phonebook`)
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+
   }
 
   const handleFilterChange = (event) => {
@@ -77,14 +80,14 @@ const App = () => {
 
       <h3>Add a new</h3>
 
-      <PersonForm 
-        handleSubmit={handleAddPerson} name={newName} number={newNumber} 
-        handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} 
+      <PersonForm
+        handleSubmit={handleAddPerson} name={newName} number={newNumber}
+        handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}
       />
 
       <h3>Numbers</h3>
-      
-      <Persons personsToShow={personsToShow}/>
+
+      <Persons personsToShow={personsToShow} />
     </div>
   )
 }
