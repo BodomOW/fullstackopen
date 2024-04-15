@@ -34,11 +34,28 @@ const App = () => {
       number: newNumber
     }
 
-    // Checks whether an element is duplicated
-    const checkDuplicate = (element) => element.name === personObject.name;
+    // Duplicate value starts with 0
+    let checkDuplicate = 0
 
-    if (persons.some(checkDuplicate)) {
-      alert(`${personObject.name} is already added to the phonebook`)
+    persons.forEach(person => {
+      if (person.name.toLowerCase() === personObject.name.toLowerCase()) {
+        checkDuplicate = 1
+        const text = `${personObject.name} is already added to the phonebook, replace the old number with a new one?`
+        if (confirm(text) == true) {
+          console.log('Person id to update:', person.id)
+          console.log('Person name to update:', person.name)
+          personService
+            .update(person.id, personObject)
+            .then(returnedPerson => {
+              setPersons(persons.filter(person => person.name.toLowerCase() !== personObject.name.toLowerCase()).concat(returnedPerson))
+              setNewName('')
+              setNewNumber('')
+            })
+        }
+      }
+    })
+
+    if (checkDuplicate === 1) {
       return
     }
 
@@ -54,7 +71,7 @@ const App = () => {
   const handleDeletePerson = (id, name) => {
     console.log('Person id to remove:', id)
     console.log('Person name to remove:', name)
-    let text = `Delete ${name} ?`
+    const text = `Delete ${name} ?`
     if (confirm(text) == true) {
       personService
         .remove(id)
