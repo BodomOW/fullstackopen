@@ -52,12 +52,14 @@ const App = () => {
   }
 
   const handleDeletePerson = (id, name) => {
-    console.log('Person id to remove: ', id)
-    console.log('Person name to remove: ', name)
-    window.confirm(`Delete ${name} ?`)
-    personService
-      .remove(id)
-      .then(setPersons(persons.filter(person => person.id !== id)))
+    console.log('Person id to remove:', id)
+    console.log('Person name to remove:', name)
+    let text = `Delete ${name} ?`
+    if (confirm(text) == true) {
+      personService
+        .remove(id)
+        .then(setPersons(persons.filter(person => person.id !== id)))
+    }
   }
 
   const handleFilterChange = (event) => {
