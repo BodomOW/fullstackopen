@@ -3,9 +3,12 @@ const Notification = ({ message }) => {
     return null
   }
 
+  console.log('Text:', message.text)
+  console.log('Status:', message.status)
+
   return (
-    <div className='success'>
-      {message}
+    <div className={message.status}>
+      {message.text}
     </div>
   )
 }

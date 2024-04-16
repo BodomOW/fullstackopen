@@ -13,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
-  const [successMessage, setSuccessMessage] = useState('Success')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -52,10 +52,24 @@ const App = () => {
               setPersons(persons.filter(person => person.name.toLowerCase() !== personObject.name.toLowerCase()).concat(returnedPerson))
               setNewName('')
               setNewNumber('')
-              setSuccessMessage(`${returnedPerson.name} number updated successfully`)
+              setMessage({
+                text: `${returnedPerson.name} number updated successfully`,
+                status: 'success'
+              })
               setTimeout(() => {
-                setSuccessMessage(null)
+                setMessage(null)
               }, 5000)
+            })
+            .catch(error => {
+              setMessage({
+                text: `'${person.name}' was already removed from server`,
+                status: 'error'
+              }
+              )
+              setTimeout(() => {
+                setMessage(null)
+              }, 5000)
+              setPersons(persons.filter(n => n.id !== person.id))
             })
         }
       }
@@ -71,9 +85,12 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setSuccessMessage(`Added ${returnedPerson.name}`)
+        setMessage({
+          text: `Added ${returnedPerson.name}`,
+          status: 'success'
+        })
         setTimeout(() => {
-          setSuccessMessage(null)
+          setMessage(null)
         }, 5000)
       })
   }
@@ -110,7 +127,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={successMessage} />
+      <Notification message={message} />
 
       <Filter value={newFilter} handleFilterChange={handleFilterChange} />
 
