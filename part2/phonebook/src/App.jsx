@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 import personService from './services/persons'
 
@@ -12,6 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [successMessage, setSuccessMessage] = useState('Success')
 
   useEffect(() => {
     personService
@@ -50,6 +52,10 @@ const App = () => {
               setPersons(persons.filter(person => person.name.toLowerCase() !== personObject.name.toLowerCase()).concat(returnedPerson))
               setNewName('')
               setNewNumber('')
+              setSuccessMessage(`${returnedPerson.name} number updated successfully`)
+              setTimeout(() => {
+                setSuccessMessage(null)
+              }, 5000)
             })
         }
       }
@@ -65,6 +71,10 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setSuccessMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
       })
   }
 
@@ -99,7 +109,9 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={successMessage} />
+
       <Filter value={newFilter} handleFilterChange={handleFilterChange} />
 
       <h3>Add a new</h3>
