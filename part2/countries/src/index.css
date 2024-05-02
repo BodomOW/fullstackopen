@@ -5,3 +5,6 @@ li {
   list-style: inside;
   padding-left: 2rem;
 }
+button {
+  cursor: pointer;
+}

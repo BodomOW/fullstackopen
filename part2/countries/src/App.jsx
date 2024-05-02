@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 
 import countryService from './services/countries'
 
-const DataDisplay = ({ data }) => {
+const DataDisplay = ({ data, handleBtn, state }) => {
+  console.log('state', state)
   console.log('data', data)
 
   let countryData
@@ -12,7 +13,34 @@ const DataDisplay = ({ data }) => {
   }
 
   if (data.length <= 10 && data.length > 1) {
-    countryData = data.map(country => <p key={country.area}>{country.name}</p>)
+    countryData = data.map(country => {
+      let btnText = state.map(e => {
+        if (e.area === country.area) {
+          return e.btnText
+        }
+      })
+      // console.log(btn)
+      return (
+        <div key={country.area}>
+          <p>{country.name} <button id={`btn-${country.area}`} onClick={() => handleBtn(country.area)}>{btnText}</button></p>
+          <div id={`content-${country.area}`} hidden>
+            <p>capital {country.capital}</p>
+            <p>area {country.area}</p>
+            <b>languages:</b>
+            <ul>
+              {Object.entries(country.spokenLang).map(([key, value]) =>
+                <li key={key}>{value}</li>
+              )}
+            </ul>
+            <picture>
+              <img src={country.flag.png} alt={country.flag.alt}></img>
+            </picture>
+            <br />
+            <hr />
+          </div>
+        </div>
+      )
+    })
   }
 
   if (data.length === 1) {
@@ -25,8 +53,8 @@ const DataDisplay = ({ data }) => {
           <b>languages:</b>
           <ul>
             {Object.entries(country.spokenLang).map(([key, value]) =>
-              <li key={key}>{value}</li>)
-            }
+              <li key={key}>{value}</li>
+            )}
           </ul>
           <picture>
             <img src={country.flag.png} alt={country.flag.alt}></img>
@@ -36,7 +64,7 @@ const DataDisplay = ({ data }) => {
     })
   }
 
-  console.log('countryData', countryData)
+  // console.log('countryData', countryData)
   return (
     <>
       {countryData}
@@ -47,23 +75,15 @@ const DataDisplay = ({ data }) => {
 
 const App = () => {
   const [countries, setCountries] = useState([]) // Initial Countries, value is not going to change after getting them
-  console.log('countries', countries)
   const [showCountries, setShowCountries] = useState(false) // Boolean to determine if we need to show something
   const [newFilter, setNewFilter] = useState('') // Filter to match the name of the country
-  // const [showData, setShowData] = useState([{ // Object that contains the information to show
-  //   name: '',
-  //   capital: '',
-  //   area: '',
-  //   spokenLang: [],
-  //   flag: {}
-  // }])
+  const [countrySelected, setCountrySelected] = useState([])
 
   useEffect(() => {
     countryService
       .getAll()
       .then(AllCountries => {
         setCountries(AllCountries)
-        // console.log(countries.name.common)
       })
       .catch(error => {
         console.log(error)
@@ -76,10 +96,10 @@ const App = () => {
   // Saving countries
   const countriesToShow = []
 
-  const checkMatch = (country) => {
+  const checkMatch = country => {
     const currentCountry = country.name.common.toLowerCase().match(re)
     if (currentCountry !== null) {
-      console.log('currentCountry', currentCountry)
+      // console.log('currentCountry', currentCountry)
 
       const countryObject = {
         name: country.name.common,
@@ -89,9 +109,23 @@ const App = () => {
         flag: country.flags
       }
 
-      console.log('countryObject', countryObject)
+      // console.log('countryObject', countryObject)
       countriesToShow.push(countryObject)
     }
+  }
+
+  const toggleButton = area => {
+    const content = document.querySelector(`#content-${area}`)
+    content.toggleAttribute('hidden')
+
+    let test = (countrySelected.filter(country => country.area === area))
+
+    if (!content.hasAttribute('hidden')) {
+      test.forEach(item => item.btnText = 'hide')
+    } else {
+      test.forEach(item => item.btnText = 'show')
+    }
+    setCountrySelected((countrySelected.filter(country => country.area !== area)).concat(test))
   }
 
   if (showCountries) {
@@ -102,7 +136,7 @@ const App = () => {
 
   const handleFilterChange = event => {
     const value = event.target.value
-    console.log(value)
+    // console.log(value)
 
     setNewFilter(value)
 
@@ -111,13 +145,15 @@ const App = () => {
     }
 
     setShowCountries(true)
+
+    setCountrySelected(countriesToShow.map(({ area }) => ({ area, btnText: 'show' })))
   }
 
   return (
     <>
       <span>Find countries </span><input type='text' value={newFilter} onChange={handleFilterChange} />
       <br />
-      <DataDisplay data={countriesToShow} />
+      <DataDisplay data={countriesToShow} handleBtn={toggleButton} state={countrySelected} />
     </>
   )
 }
