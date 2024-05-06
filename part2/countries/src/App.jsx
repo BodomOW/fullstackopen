@@ -9,8 +9,7 @@ const isObjectEmpty = obj => {
 
 const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
   // console.log('state', state)
-  // console.log('data', data)
-  console.log('weather obj', weather)
+  console.log('data', data)
 
   let countryData
 
@@ -30,13 +29,14 @@ const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
         <div key={country.area}>
           <p>{country.name} <button id={`btn-${country.area}`} onClick={() => handleBtn(country.area)}>{btnText}</button></p>
           <div id={`content-${country.area}`} hidden>
-            <p>capital {country.capital}</p>
+            <p>capital {!country.capital === undefined ? country.capital : ''}</p>
             <p>area {country.area}</p>
             <b>languages:</b>
             <ul>
-              {Object.entries(country.spokenLang).map(([key, value]) =>
-                <li key={key}>{value}</li>
-              )}
+              {!country.spokenLang === undefined
+                ? Object.entries(country.spokenLang).map(([key, value]) => <li key={key}>{value}</li>)
+                : ''
+              }
             </ul>
             <picture>
               <img src={country.flag.png} alt={country.flag.alt}></img>
@@ -54,30 +54,30 @@ const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
 
       handleGeoCode(country)
 
-      if (!isObjectEmpty(weather)) {
-        return (
-          <div key={country.area}>
-            <h1>{country.name}</h1>
-            <p>capital {country.capital}</p>
-            <p>area {country.area}</p>
-            <b>languages:</b>
-            <ul>
-              {Object.entries(country.spokenLang).map(([key, value]) =>
-                <li key={key}>{value}</li>
-              )}
-            </ul>
-            <picture>
-              <img src={country.flag.png} alt={country.flag.alt}></img>
-            </picture>
-            <h2>{`Weather in ${country.name}`}</h2>
-            <p>temperature {weather.main.temp} Celcius</p>
-            <picture>
-              <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description} />
-            </picture>
-            <p>wind {weather.wind.speed} m/s</p>
-          </div>
-        )
-      }
+      if (isObjectEmpty(weather)) { return }
+      return (
+        <div key={country.area}>
+          <h1>{country.name}</h1>
+          <p>capital {country.capital}</p>
+          <p>area {country.area}</p>
+          <b>languages:</b>
+          <ul>
+            {Object.entries(country.spokenLang).map(([key, value]) =>
+              <li key={key}>{value}</li>
+            )}
+          </ul>
+          <picture>
+            <img src={country.flag.png} alt={country.flag.alt}></img>
+          </picture>
+          <h2>{`Weather in ${country.name}`}</h2>
+          <p>temperature {weather.main.temp} Celcius</p>
+          <picture>
+            <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description} />
+          </picture>
+          <p>wind {weather.wind.speed} m/s</p>
+        </div>
+      )
+
     })
   }
 
@@ -110,7 +110,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    console.log('useEffect related to state geoCode', geoCode)
+    // console.log('useEffect related to state geoCode', geoCode)
 
     if (geoCode.length === 0) {
       return
@@ -119,7 +119,7 @@ const App = () => {
     weatherService
       .getWeather(geoCode[0].lat, geoCode[0].lon)
       .then(weather => {
-        console.log('weather', weather)
+        // console.log('weather', weather)
         setWeather(weather)
       })
       .catch(error => {
@@ -165,10 +165,6 @@ const App = () => {
     setCountrySelected((countrySelected.filter(country => country.area !== area)).concat(test))
   }
 
-  if (showCountries) {
-    countries.filter(country => checkMatch(country))
-  }
-
   // console.log('countriesToShow', countriesToShow)
 
   const handleFilterChange = event => {
@@ -193,14 +189,18 @@ const App = () => {
       weatherService
         .getGeocode(country.name)
         .then(geoCode => {
-          console.log('useEffect geoCode', geoCode)
-          console.log(geoCode[0].lat, geoCode[0].lon)
+          // console.log('useEffect geoCode', geoCode)
+          // console.log(geoCode[0].lat, geoCode[0].lon)
           setGeoCode(geoCode)
         })
         .catch(error => {
           console.log(error)
         })
     }, [])
+  }
+
+  if (showCountries) {
+    countries.filter(country => checkMatch(country))
   }
 
   return (

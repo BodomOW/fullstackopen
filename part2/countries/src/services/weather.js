@@ -2,8 +2,6 @@ import axios from 'axios'
 const baseUrl = 'https://api.openweathermap.org'
 const api_key = import.meta.env.VITE_SOME_KEY
 
-// https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
 const getWeather = (lat, lon) => {
   console.log(lat, lon)
   const request = axios.get(`${baseUrl}/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`)
