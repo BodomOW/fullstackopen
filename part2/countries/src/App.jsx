@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react'
 
 import countryService from './services/countries'
+import weatherService from './services/weather'
 
-const DataDisplay = ({ data, handleBtn, state }) => {
-  console.log('state', state)
-  console.log('data', data)
+const isObjectEmpty = obj => {
+  return Object.keys(obj).length === 0
+}
+
+const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
+  // console.log('state', state)
+  // console.log('data', data)
+  console.log('weather obj', weather)
 
   let countryData
 
@@ -45,22 +51,33 @@ const DataDisplay = ({ data, handleBtn, state }) => {
 
   if (data.length === 1) {
     countryData = data.map(country => {
-      return (
-        <div key={country.area}>
-          <h1>{country.name}</h1>
-          <p>capital {country.capital}</p>
-          <p>area {country.area}</p>
-          <b>languages:</b>
-          <ul>
-            {Object.entries(country.spokenLang).map(([key, value]) =>
-              <li key={key}>{value}</li>
-            )}
-          </ul>
-          <picture>
-            <img src={country.flag.png} alt={country.flag.alt}></img>
-          </picture>
-        </div>
-      )
+
+      handleGeoCode(country)
+
+      if (!isObjectEmpty(weather)) {
+        return (
+          <div key={country.area}>
+            <h1>{country.name}</h1>
+            <p>capital {country.capital}</p>
+            <p>area {country.area}</p>
+            <b>languages:</b>
+            <ul>
+              {Object.entries(country.spokenLang).map(([key, value]) =>
+                <li key={key}>{value}</li>
+              )}
+            </ul>
+            <picture>
+              <img src={country.flag.png} alt={country.flag.alt}></img>
+            </picture>
+            <h2>{`Weather in ${country.name}`}</h2>
+            <p>temperature {weather.main.temp} Celcius</p>
+            <picture>
+              <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description} />
+            </picture>
+            <p>wind {weather.wind.speed} m/s</p>
+          </div>
+        )
+      }
     })
   }
 
@@ -78,6 +95,8 @@ const App = () => {
   const [showCountries, setShowCountries] = useState(false) // Boolean to determine if we need to show something
   const [newFilter, setNewFilter] = useState('') // Filter to match the name of the country
   const [countrySelected, setCountrySelected] = useState([])
+  const [geoCode, setGeoCode] = useState([])
+  const [weather, setWeather] = useState({})
 
   useEffect(() => {
     countryService
@@ -89,6 +108,24 @@ const App = () => {
         console.log(error)
       })
   }, [])
+
+  useEffect(() => {
+    console.log('useEffect related to state geoCode', geoCode)
+
+    if (geoCode.length === 0) {
+      return
+    }
+
+    weatherService
+      .getWeather(geoCode[0].lat, geoCode[0].lon)
+      .then(weather => {
+        console.log('weather', weather)
+        setWeather(weather)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [geoCode])
 
   // regex
   const re = RegExp(`.*${newFilter.toLowerCase().split('').join('.*')}.*`)
@@ -132,7 +169,7 @@ const App = () => {
     countries.filter(country => checkMatch(country))
   }
 
-  console.log('countriesToShow', countriesToShow)
+  // console.log('countriesToShow', countriesToShow)
 
   const handleFilterChange = event => {
     const value = event.target.value
@@ -149,11 +186,28 @@ const App = () => {
     setCountrySelected(countriesToShow.map(({ area }) => ({ area, btnText: 'show' })))
   }
 
+  const handleGeoCode = country => {
+    // console.log('country', country)
+
+    useEffect(() => {
+      weatherService
+        .getGeocode(country.name)
+        .then(geoCode => {
+          console.log('useEffect geoCode', geoCode)
+          console.log(geoCode[0].lat, geoCode[0].lon)
+          setGeoCode(geoCode)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }, [])
+  }
+
   return (
     <>
       <span>Find countries </span><input type='text' value={newFilter} onChange={handleFilterChange} />
       <br />
-      <DataDisplay data={countriesToShow} handleBtn={toggleButton} state={countrySelected} />
+      <DataDisplay data={countriesToShow} handleBtn={toggleButton} state={countrySelected} handleGeoCode={handleGeoCode} weather={weather} />
     </>
   )
 }
