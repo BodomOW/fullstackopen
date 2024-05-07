@@ -7,7 +7,7 @@ const isObjectEmpty = obj => {
   return Object.keys(obj).length === 0
 }
 
-const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
+const DataDisplay = ({ data, handleBtn, handleGeoCode, weather }) => {
   // console.log('state', state)
   console.log('data', data)
 
@@ -19,21 +19,17 @@ const DataDisplay = ({ data, handleBtn, state, handleGeoCode, weather }) => {
 
   if (data.length <= 10 && data.length > 1) {
     countryData = data.map(country => {
-      let btnText = state.map(e => {
-        if (e.area === country.area) {
-          return e.btnText
-        }
-      })
+
       // console.log(btn)
       return (
         <div key={country.area}>
-          <p>{country.name} <button id={`btn-${country.area}`} onClick={() => handleBtn(country.area)}>{btnText}</button></p>
+          <p>{country.name} <button id={`btn-${country.area}`} onClick={() => handleBtn(country.area)}>{country.btnText}</button></p>
           <div id={`content-${country.area}`} hidden>
             <p>capital {!country.capital === undefined ? country.capital : ''}</p>
             <p>area {country.area}</p>
             <b>languages:</b>
             <ul>
-              {!country.spokenLang === undefined
+              {country.spokenLang !== undefined
                 ? Object.entries(country.spokenLang).map(([key, value]) => <li key={key}>{value}</li>)
                 : ''
               }
@@ -94,8 +90,7 @@ const App = () => {
   const [countries, setCountries] = useState([]) // Initial Countries, value is not going to change after getting them
   const [showCountries, setShowCountries] = useState(false) // Boolean to determine if we need to show something
   const [newFilter, setNewFilter] = useState('') // Filter to match the name of the country
-  const [countrySelected, setCountrySelected] = useState([])
-  const [geoCode, setGeoCode] = useState([])
+  const [geoCode, setGeoCode] = useState([]) // Getting geoCode depending on Country name
   const [weather, setWeather] = useState({})
 
   useEffect(() => {
@@ -143,7 +138,8 @@ const App = () => {
         capital: country.capital,
         area: country.area,
         spokenLang: country.languages,
-        flag: country.flags
+        flag: country.flags,
+        btnText: 'show'
       }
 
       // console.log('countryObject', countryObject)
@@ -153,16 +149,11 @@ const App = () => {
 
   const toggleButton = area => {
     const content = document.querySelector(`#content-${area}`)
+    const currentBtn = document.querySelector(`#btn-${area}`)
+
     content.toggleAttribute('hidden')
 
-    let test = (countrySelected.filter(country => country.area === area))
-
-    if (!content.hasAttribute('hidden')) {
-      test.forEach(item => item.btnText = 'hide')
-    } else {
-      test.forEach(item => item.btnText = 'show')
-    }
-    setCountrySelected((countrySelected.filter(country => country.area !== area)).concat(test))
+    !content.hasAttribute('hidden') ? currentBtn.textContent = 'hide' : currentBtn.textContent = 'show'
   }
 
   // console.log('countriesToShow', countriesToShow)
@@ -178,8 +169,6 @@ const App = () => {
     }
 
     setShowCountries(true)
-
-    setCountrySelected(countriesToShow.map(({ area }) => ({ area, btnText: 'show' })))
   }
 
   const handleGeoCode = country => {
@@ -207,7 +196,7 @@ const App = () => {
     <>
       <span>Find countries </span><input type='text' value={newFilter} onChange={handleFilterChange} />
       <br />
-      <DataDisplay data={countriesToShow} handleBtn={toggleButton} state={countrySelected} handleGeoCode={handleGeoCode} weather={weather} />
+      <DataDisplay data={countriesToShow} handleBtn={toggleButton} handleGeoCode={handleGeoCode} weather={weather} />
     </>
   )
 }
