@@ -81,13 +81,23 @@ const App = () => {
 
     personService
       .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
+      .then(createdPerson => {
+        setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
         setMessage({
-          text: `Added ${returnedPerson.name}`,
+          text: `Added ${createdPerson.name}`,
           status: 'success'
+        })
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
+      .catch((error) => {
+        // this is the way to access the error message
+        setMessage({
+          text: `${error.response.data.error}`,
+          status: 'error'
         })
         setTimeout(() => {
           setMessage(null)
