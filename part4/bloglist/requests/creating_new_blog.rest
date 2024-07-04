@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs/ HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Strings configuration",
-    "author": "Janne Wirman",
-    "url": "https://en.wikipedia.org/wiki/Janne_Wirman",
-    "likes": 2356
+    "title": "TEST - 4.2 Blog List, step 2",
+    "author": "NOMA",
+    "url": "https://test.com",
+    "likes": 123
 }
