@@ -30,13 +30,15 @@ test('all blogs are returned', async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-// test('a specific note is within the returned notes', async () => {
-//   const response = await api.get('/api/notes')
+test('Unique identifier is named id', async () => {
+  const response = await api.get('/api/blogs')
 
-//   const contents = response.body.map(r => r.content)
+  const idProperty = response.body.every(note => note.hasOwnProperty('id'))
 
-//   assert(contents.includes('Browser can execute only JavaScript'))
-// })
+  console.log('idProperty', idProperty)
+
+  assert.strictEqual(idProperty, true)
+})
 
 // test('a valid note can be added ', async () => {
 //   const newNote = {
