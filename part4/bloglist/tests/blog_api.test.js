@@ -30,7 +30,7 @@ test('all blogs are returned', async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-test('Unique identifier is named id', async () => {
+test('unique identifier is named id', async () => {
   const response = await api.get('/api/blogs')
 
   const idProperty = response.body.every(note => note.hasOwnProperty('id'))
@@ -40,26 +40,24 @@ test('Unique identifier is named id', async () => {
   assert.strictEqual(idProperty, true)
 })
 
-// test('a valid note can be added ', async () => {
-//   const newNote = {
-//     content: 'async/await simplifies making async calls',
-//     important: true,
-//   }
+test('a valid blog can be added ', async () => {
+  const newBlog = {
+    title: "TEST 3 - 4.10: Blog List Tests, step 3",
+    author: "NOMA 3",
+    url: "https://test-3.com",
+    likes: 333
+  }
 
-//   await api
-//     .post('/api/notes')
-//     .send(newNote)
-//     .expect(201)
-//     .expect('Content-Type', /application\/json/)
-
-
-//   const notesAtEnd = await helper.notesInDb()
-//   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
 
 
-//   const contents = notesAtEnd.map(n => n.content)
-//   assert(contents.includes('async/await simplifies making async calls'))
-// })
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+})
 
 // test('note without content is not added', async () => {
 //   const newNote = {
