@@ -32,11 +32,7 @@ test('all blogs are returned', async () => {
 
 test('unique identifier is named id', async () => {
   const response = await api.get('/api/blogs')
-
   const idProperty = response.body.every(note => note.hasOwnProperty('id'))
-
-  // console.log('idProperty', idProperty)
-
   assert.strictEqual(idProperty, true)
 })
 
@@ -53,7 +49,6 @@ test('a valid blog can be added ', async () => {
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
-
 
   const blogsAtEnd = await helper.blogsInDb()
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
@@ -72,61 +67,27 @@ test('a blog without likes specified can be added ', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-
   const blogsAtEnd = await helper.blogsInDb()
-  console.log(blogsAtEnd)
   const lastBlog = blogsAtEnd.length - 1
 
   assert.strictEqual(blogsAtEnd[lastBlog].likes, 0)
 })
 
-// test('note without content is not added', async () => {
-//   const newNote = {
-//     important: true
-//   }
+test('blog without title or url is not added', async () => {
+  const newBlog = {
+    author: "NOMA 5",
+    likes: 5
+  }
 
-//   await api
-//     .post('/api/notes')
-//     .send(newNote)
-//     .expect(400)
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 
+  const blogsAtEnd = await helper.blogsInDb()
 
-//   const notesAtEnd = await helper.notesInDb()
-
-
-//   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
-// })
-
-// test('a specific note can be viewed', async () => {
-//   const notesAtStart = await helper.notesInDb()
-
-//   const noteToView = notesAtStart[0]
-
-
-//   const resultNote = await api
-//     .get(`/api/notes/${noteToView.id}`)
-//     .expect(200)
-//     .expect('Content-Type', /application\/json/)
-
-//   assert.deepStrictEqual(resultNote.body, noteToView)
-// })
-
-// test('a note can be deleted', async () => {
-//   const notesAtStart = await helper.notesInDb()
-//   const noteToDelete = notesAtStart[0]
-
-
-//   await api
-//     .delete(`/api/notes/${noteToDelete.id}`)
-//     .expect(204)
-
-//   const notesAtEnd = await helper.notesInDb()
-
-//   const contents = notesAtEnd.map(r => r.content)
-//   assert(!contents.includes(noteToDelete.content))
-
-//   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1)
-// })
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
 
 after(async () => {
   await mongoose.connection.close()
