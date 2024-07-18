@@ -35,7 +35,7 @@ test('unique identifier is named id', async () => {
 
   const idProperty = response.body.every(note => note.hasOwnProperty('id'))
 
-  console.log('idProperty', idProperty)
+  // console.log('idProperty', idProperty)
 
   assert.strictEqual(idProperty, true)
 })
@@ -57,6 +57,27 @@ test('a valid blog can be added ', async () => {
 
   const blogsAtEnd = await helper.blogsInDb()
   assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+})
+
+test('a blog without likes specified can be added ', async () => {
+  const newBlog = {
+    title: "TEST 4 - 4.11*: Blog List Tests, step 4",
+    author: "NOMA 4",
+    url: "https://test-4.com"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+
+  const blogsAtEnd = await helper.blogsInDb()
+  console.log(blogsAtEnd)
+  const lastBlog = blogsAtEnd.length - 1
+
+  assert.strictEqual(blogsAtEnd[lastBlog].likes, 0)
 })
 
 // test('note without content is not added', async () => {
