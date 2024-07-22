@@ -113,6 +113,28 @@ describe('deletion of a blog post', () => {
   })
 })
 
+describe('updating the likes of a single blog post', () => {
+  test('succeeds with status code 200 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const update = {
+      likes: 999
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(update)
+      .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+
+    assert.strictEqual(blogsAtEnd[0].likes, update.likes)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
