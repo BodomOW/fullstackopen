@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
@@ -36,57 +36,81 @@ test('unique identifier is named id', async () => {
   assert.strictEqual(idProperty, true)
 })
 
-test('a valid blog can be added ', async () => {
-  const newBlog = {
-    title: "TEST 3 - 4.10: Blog List Tests, step 3",
-    author: "NOMA 3",
-    url: "https://test-3.com",
-    likes: 333
-  }
+describe('addition of a new blog post', () => {
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+  test('a valid blog can be added ', async () => {
+    const newBlog = {
+      title: "TEST 3 - 4.10: Blog List Tests, step 3",
+      author: "NOMA 3",
+      url: "https://test-3.com",
+      likes: 333
+    }
 
-  const blogsAtEnd = await helper.blogsInDb()
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+  })
+
+  test('a blog without likes specified can be added ', async () => {
+    const newBlog = {
+      title: "TEST 4 - 4.11*: Blog List Tests, step 4",
+      author: "NOMA 4",
+      url: "https://test-4.com"
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastBlog = blogsAtEnd.length - 1
+
+    assert.strictEqual(blogsAtEnd[lastBlog].likes, 0)
+  })
+
+  test('blog without title or url is not added', async () => {
+    const newBlog = {
+      author: "NOMA 5",
+      likes: 5
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
 })
 
-test('a blog without likes specified can be added ', async () => {
-  const newBlog = {
-    title: "TEST 4 - 4.11*: Blog List Tests, step 4",
-    author: "NOMA 4",
-    url: "https://test-4.com"
-  }
+describe('deletion of a blog post', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  const lastBlog = blogsAtEnd.length - 1
+    const blogsAtEnd = await helper.blogsInDb()
 
-  assert.strictEqual(blogsAtEnd[lastBlog].likes, 0)
-})
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
 
-test('blog without title or url is not added', async () => {
-  const newBlog = {
-    author: "NOMA 5",
-    likes: 5
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-
-  const blogsAtEnd = await helper.blogsInDb()
-
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    const titles = blogsAtEnd.map(r => r.title)
+    // console.log('titles', titles)
+    // console.log('blogToDelete', blogToDelete)
+    assert(!titles.includes(blogToDelete.title))
+  })
 })
 
 after(async () => {
