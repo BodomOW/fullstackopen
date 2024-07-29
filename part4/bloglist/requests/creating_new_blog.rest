@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs/ HTTP/1.1
 content-type: application/json
 
 {
-    "title": "TEST - 4.2 Blog List, step 2",
-    "author": "NOMA",
+    "title": "TEST - 4.19: Blog List Expansion, step 7",
+    "author": "NOMA 4.19",
     "url": "https://test.com",
     "likes": 123
 }
