@@ -40,11 +40,13 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.log('Wrong credentials')
-      // setErrorMessage('Wrong credentials')
-      // setTimeout(() => {
-      //   setErrorMessage(null)
-      // }, 5000)
     }
+  }
+
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem('loggedBloglistappUser')
+    setUser(null)
   }
 
   const loginForm = () => (
@@ -76,7 +78,7 @@ const App = () => {
 
   const blogList = () => (
     <>
-      <p>{user.name} logged-in</p>
+      <p>{user.name} logged-in <button onClick={handleLogout}>logout</button></p>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
@@ -89,10 +91,7 @@ const App = () => {
 
   return (
     <>
-      {user === null ?
-        loginForm() :
-        blogList()
-      }
+      {user === null ? loginForm() : blogList()}
     </>
   )
 }
