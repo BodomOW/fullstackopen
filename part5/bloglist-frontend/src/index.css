@@ -25,3 +25,7 @@ h1 {
 .error {
   color: red;
 }
+
+.btn-sort{
+  margin-top: 2em;
+}

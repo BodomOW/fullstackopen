@@ -11,6 +11,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [sortDesc, setSortDesc] = useState(false)
   const [alertMessage, setAlertMessage] = useState(null)
   const blogFormRef = useRef()
 
@@ -77,12 +78,17 @@ const App = () => {
   }
 
   const addLike = (id, blogObject) => {
-    console.log('blogObject', blogObject)
     blogService
       .addLike(id, blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
       })
+  }
+
+  const handleSort = () => {
+    setSortDesc(!sortDesc)
+    const sortedBlogs = sortDesc ? blogs.toSorted((a, b) => b.likes - a.likes) : blogs.toSorted((a, b) => a.likes - b.likes)
+    setBlogs(sortedBlogs)
   }
 
   const Header = () => (
@@ -131,6 +137,7 @@ const App = () => {
       <p>{user.name} logged-in <button onClick={handleLogout}>logout</button></p>
       <h2>Create new</h2>
       {blogForm()}
+      <button className='btn-sort' onClick={handleSort}>Sort by likes</button>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} updateLike={addLike} />
       )}
