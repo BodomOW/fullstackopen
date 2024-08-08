@@ -3,9 +3,9 @@ h1 {
   font-style: italic;
 }
 
-.note {
-  color: grey;
-  padding-top: 5px;
+.blog {
+  border: 1px solid #000;
+  margin-block: 8px;
   font-size: 15px;
 }
 
