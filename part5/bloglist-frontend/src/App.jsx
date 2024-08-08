@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import AlertMessage from './components/AlertMessage'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [alertMessage, setAlertMessage] = useState(null)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -58,29 +60,12 @@ const App = () => {
     setUser(null)
   }
 
-  const handleTitleChange = (event) => {
-    setNewBlog({ ...newBlog, title: event.target.value })
-  }
-  const handleAuthorChange = (event) => {
-    setNewBlog({ ...newBlog, author: event.target.value })
-  }
-  const handleURLChange = (event) => {
-    setNewBlog({ ...newBlog, url: event.target.value })
-  }
-
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlog.title,
-      author: newBlog.author,
-      url: newBlog.url,
-    }
-
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setNewBlog({ title: '', author: '', url: '' })
         setAlertMessage({
           text: `new blog: ${blogObject.title} by ${blogObject.author} has been added`,
           status: 'success'
@@ -127,36 +112,9 @@ const App = () => {
   )
 
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        <label htmlFor='title'>title: </label>
-        <input
-          id='title'
-          name='title'
-          value={newBlog.title}
-          onChange={handleTitleChange}
-        />
-      </div>
-      <div>
-        <label htmlFor='author'>author: </label>
-        <input
-          id='author'
-          name='author'
-          value={newBlog.author}
-          onChange={handleAuthorChange}
-        />
-      </div>
-      <div>
-        <label htmlFor='url'>url: </label>
-        <input
-          id='url'
-          name='url'
-          value={newBlog.url}
-          onChange={handleURLChange}
-        />
-      </div>
-      <button type="submit">save</button>
-    </form>
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
   )
 
   const blogList = () => (
