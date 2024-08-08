@@ -76,6 +76,15 @@ const App = () => {
       })
   }
 
+  const addLike = (id, blogObject) => {
+    console.log('blogObject', blogObject)
+    blogService
+      .addLike(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+  }
+
   const Header = () => (
     <>
       {user === null
@@ -123,7 +132,7 @@ const App = () => {
       <h2>Create new</h2>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateLike={addLike} />
       )}
     </>
   )
