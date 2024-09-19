@@ -5,11 +5,6 @@ const Blog = ({ blog, updateLike, remove, user }) => {
 
   const showWhenVisible = { display: showInfo ? '' : 'none' }
 
-  console.log('Just the blog', blog)
-  console.log('Just the user', user)
-  console.log('blog.user.name', blog.user.name)
-  console.log('------------')
-
   const showRemoveBtn = { display: user === blog.user.name ? '' : 'none' }
 
   const userName = blog.user.name

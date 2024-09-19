@@ -82,7 +82,6 @@ const App = () => {
     blogService
       .addLike(id, blogObject)
       .then(returnedBlog => {
-        console.log('HERE returnedBlog', returnedBlog)
         setBlogs(blogs.map(blog => blog.id !== id ? blog : { ...returnedBlog, user: blog.user }))
       })
   }
