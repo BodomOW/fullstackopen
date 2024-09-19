@@ -22,9 +22,13 @@ const create = async newObject => {
 }
 
 const addLike = (id, newObject) => {
-  console.log('services addLike id:', id)
   const request = axios.put(`${baseUrl}/${id}`, newObject)
   return request.then(response => response.data)
 }
 
-export default { setToken, getAll, create, addLike }
+const remove = id => {
+  const request = axios.delete(`${baseUrl}/${id}`)
+  return request
+}
+
+export default { setToken, getAll, create, addLike, remove }

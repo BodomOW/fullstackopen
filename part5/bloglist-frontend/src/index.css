@@ -29,3 +29,12 @@ h1 {
 .btn-sort{
   margin-top: 2em;
 }
+
+.remove{
+  background-color: rgb(177, 16, 16);
+  border: transparent;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: white;
+  cursor: pointer;
+}

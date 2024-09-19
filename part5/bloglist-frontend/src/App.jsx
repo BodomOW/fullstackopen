@@ -5,6 +5,7 @@ import blogService from './services/blogs'
 import AlertMessage from './components/AlertMessage'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -81,7 +82,8 @@ const App = () => {
     blogService
       .addLike(id, blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        console.log('HERE returnedBlog', returnedBlog)
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : { ...returnedBlog, user: blog.user }))
       })
   }
 
@@ -89,6 +91,15 @@ const App = () => {
     setSortDesc(!sortDesc)
     const sortedBlogs = sortDesc ? blogs.toSorted((a, b) => b.likes - a.likes) : blogs.toSorted((a, b) => a.likes - b.likes)
     setBlogs(sortedBlogs)
+  }
+
+  const handleDelete = (id, title, author) => {
+    const text = `Delete ${title} by ${author} ?`
+    if (confirm(text) == true) {
+      blogService
+        .remove(id)
+        .then(setBlogs(blogs.filter(blog => blog.id !== id)))
+    }
   }
 
   const Header = () => (
@@ -102,30 +113,6 @@ const App = () => {
   )
 
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
-
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
@@ -137,9 +124,9 @@ const App = () => {
       <p>{user.name} logged-in <button onClick={handleLogout}>logout</button></p>
       <h2>Create new</h2>
       {blogForm()}
-      <button className='btn-sort' onClick={handleSort}>Sort by likes</button>
+      <button className='btn-sort' onClick={handleSort}>Sort by likes {sortDesc ? '↓' : '↑'}</button>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateLike={addLike} />
+        <Blog key={blog.id} blog={blog} updateLike={addLike} remove={handleDelete} user={user.name} />
       )}
     </>
   )
@@ -149,7 +136,13 @@ const App = () => {
     <>
       <Header />
       {user === null
-        ? loginForm()
+        ? <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleLogin={handleLogin}
+        />
         : blogList()
       }
     </>
