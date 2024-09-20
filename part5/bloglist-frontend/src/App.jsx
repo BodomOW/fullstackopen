@@ -67,9 +67,10 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        const blog = { ...returnedBlog, user: user }
+        setBlogs(blogs.concat(blog))
         setAlertMessage({
-          text: `new blog: ${blogObject.title} by ${blogObject.author} has been added`,
+          text: `new blog: ${returnedBlog.title} by ${returnedBlog.author} has been added`,
           status: 'success'
         })
         setTimeout(() => {
@@ -94,7 +95,7 @@ const App = () => {
 
   const handleDelete = (id, title, author) => {
     const text = `Delete ${title} by ${author} ?`
-    if (confirm(text) == true) {
+    if (confirm(text) === true) {
       blogService
         .remove(id)
         .then(setBlogs(blogs.filter(blog => blog.id !== id)))
@@ -140,7 +141,7 @@ const App = () => {
           password={password}
           handleUsernameChange={({ target }) => setUsername(target.value)}
           handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleLogin={handleLogin}
+          handleSubmit={handleLogin}
         />
         : blogList()
       }
