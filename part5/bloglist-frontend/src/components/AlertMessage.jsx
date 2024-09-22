@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const AlertMessage = ({ message }) => {
   if (message === null) {
     return null
@@ -9,5 +11,13 @@ const AlertMessage = ({ message }) => {
     </div>
   )
 }
+
+console.log('typeof null', typeof null)
+
+AlertMessage.propTypes = {
+  message: PropTypes.object
+}
+
+AlertMessage.displayName = 'AlertMessage'
 
 export default AlertMessage

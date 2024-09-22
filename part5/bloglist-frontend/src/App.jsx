@@ -67,8 +67,7 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        const blog = { ...returnedBlog, user: user }
-        setBlogs(blogs.concat(blog))
+        setBlogs(blogs.concat({ ...returnedBlog, user: user }))
         setAlertMessage({
           text: `new blog: ${returnedBlog.title} by ${returnedBlog.author} has been added`,
           status: 'success'
