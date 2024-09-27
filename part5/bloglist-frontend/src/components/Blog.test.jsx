@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<Blog/ >', () => {
@@ -26,6 +26,18 @@ describe('<Blog/ >', () => {
 
     const div = container.querySelector('.blog-content')
     expect(div).toHaveStyle('display: none')
+  })
+
+  test('after clicking the show button, url and number of likes are displayed', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('show')
+    await user.click(button)
+
+    const url = screen.findByText('https://test-01.com')
+    const likes = screen.findByText(69)
+
+    expect(url).toBeDefined()
+    expect(likes).toBeDefined()
   })
 })
 
