@@ -1,9 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import { test } from 'vitest'
 
 describe('<Blog/ >', () => {
   let container
+  const mockHandler = vi.fn()
 
   const blog = {
     title: 'Title >:3',
@@ -14,7 +16,7 @@ describe('<Blog/ >', () => {
   }
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} />).container
+    container = render(<Blog blog={blog} updateLike={mockHandler} />).container
   })
 
   test('renders title and author but does not renders url and number of likes', () => {
@@ -38,6 +40,16 @@ describe('<Blog/ >', () => {
 
     expect(url).toBeDefined()
     expect(likes).toBeDefined()
+  })
+
+  test('if the like button is clicked twice, the event handler the component received as props is called twice', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('like')
+
+    await user.click(button)
+    await user.click(button)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
 
