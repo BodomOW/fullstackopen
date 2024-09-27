@@ -12,8 +12,6 @@ const AlertMessage = ({ message }) => {
   )
 }
 
-console.log('typeof null', typeof null)
-
 AlertMessage.propTypes = {
   message: PropTypes.object
 }

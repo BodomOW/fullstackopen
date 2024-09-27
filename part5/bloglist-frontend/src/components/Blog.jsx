@@ -21,7 +21,7 @@ const Blog = ({ blog, updateLike, remove, user }) => {
   return (
     <div className='blog'>
       <p>{blog.title} by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>{btnText}</button></p>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='blog-content'>
         <p>{blog.url}</p>
         <p>{blog.likes} <button onClick={addLike}>like</button></p>
         <p>{blog.user.name}</p>
