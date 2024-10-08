@@ -8,36 +8,36 @@ const BlogForm = ({ createBlog }) => {
     createBlog({
       title: newBlog.title,
       author: newBlog.author,
-      url: newBlog.url,
+      url: newBlog.url
     })
 
     setNewBlog({ title: '', author: '', url: '' })
   }
 
   return (
-    <form onSubmit={addBlog}>
+    <form onSubmit={addBlog} id='blogForm'>
       <div>
-        <label htmlFor='title'>title: </label>
+        <label htmlFor='inputTitle'>title: </label>
         <input
-          id='title'
+          id='inputTitle'
           name='title'
           value={newBlog.title}
           onChange={event => setNewBlog({ ...newBlog, title: event.target.value })}
         />
       </div>
       <div>
-        <label htmlFor='author'>author: </label>
+        <label htmlFor='inputAuthor'>author: </label>
         <input
-          id='author'
+          id='inputAuthor'
           name='author'
           value={newBlog.author}
           onChange={event => setNewBlog({ ...newBlog, author: event.target.value })}
         />
       </div>
       <div>
-        <label htmlFor='url'>url: </label>
+        <label htmlFor='inputURL'>url: </label>
         <input
-          id='url'
+          id='inputURL'
           name='url'
           value={newBlog.url}
           onChange={event => setNewBlog({ ...newBlog, url: event.target.value })}
