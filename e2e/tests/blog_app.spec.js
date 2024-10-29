@@ -38,4 +38,15 @@ describe('Blog app', () => {
     })
   })
 
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'bodomow', 'wildchild777')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(page, 'How to open a cookie jar', 'red velvet', 'www.cookie-jar.com')
+      await expect(page.getByText('How to open a cookie jar').last()).toBeVisible()
+    })
+  })
+
 })
