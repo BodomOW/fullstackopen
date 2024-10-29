@@ -47,7 +47,7 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setAlertMessage({
-        text: 'wrong user or password',
+        text: 'wrong credentials',
         status: 'error'
       })
       setTimeout(() => {
@@ -120,7 +120,7 @@ const App = () => {
 
   const blogList = () => (
     <>
-      <p>{user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <h2>Create new</h2>
       {blogForm()}
       <button className='btn-sort' onClick={handleSort}>Sort by likes {sortDesc ? '↓' : '↑'}</button>
