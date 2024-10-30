@@ -47,6 +47,22 @@ describe('Blog app', () => {
       await createBlog(page, 'How to open a cookie jar', 'red velvet', 'www.cookie-jar.com')
       await expect(page.getByText('How to open a cookie jar').last()).toBeVisible()
     })
+
+    describe('and a blog exists', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'first blog', 'john doe', 'www.first-blog-test.com')
+      })
+
+      test('can be liked', async ({ page }) => {
+        const likeBtn = await page.getByRole('button', { name: 'like' }).last()
+        const likeBtnContainer = await likeBtn.locator('..')
+
+        await page.getByRole('button', { name: 'show' }).click()
+        await likeBtn.click()
+        await expect(likeBtnContainer.getByText('1')).toBeVisible()
+      })
+    })
+
   })
 
 })
