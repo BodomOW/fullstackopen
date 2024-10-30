@@ -61,6 +61,21 @@ describe('Blog app', () => {
         await likeBtn.click()
         await expect(likeBtnContainer.getByText('1')).toBeVisible()
       })
+
+      test('user who added the blog can delete the blog', async ({ page }) => {
+        // Enabling event handler  // Dialog window handler
+        await page.on('dialog', async dialog => {
+          expect(dialog.type()).toContain('confirm')
+          expect(dialog.message()).toContain('Delete first blog by john doe ?')
+          await dialog.accept() // Close by ussing OK button
+          // await dialog.dismiss() / Close by ussing cancel
+        })
+
+        await page.getByRole('button', { name: 'show' }).click()
+        await page.getByRole('button', { name: 'remove' }).click()
+        await page.getByRole('p', { name: 'first blog by john doe' }).waitFor({ state: 'detached' })
+        await expect(page.getByRole('p', { name: 'first blog by john doe' })).toBeHidden()
+      })
     })
 
   })
