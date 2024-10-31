@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'wildchild777'
       }
     })
+    await request.post('/api/users', {
+      data: {
+        name: 'David Martinez',
+        username: 'davito',
+        password: 'lucy'
+      }
+    })
     await page.goto('')
   })
 
@@ -75,6 +82,17 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'remove' }).click()
         await page.getByRole('p', { name: 'first blog by john doe' }).waitFor({ state: 'detached' })
         await expect(page.getByRole('p', { name: 'first blog by john doe' })).toBeHidden()
+      })
+
+      test('only the user who added the blog can see the delete button', async ({ page }) => {
+        await page.getByRole('button', { name: 'show' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).toBeVisible()
+        await page.getByRole('button', { name: 'logout' }).click()
+
+        await loginWith(page, 'davito', 'lucy')
+
+        await page.getByRole('button', { name: 'show' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
       })
     })
 
