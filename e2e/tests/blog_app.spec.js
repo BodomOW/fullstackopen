@@ -59,7 +59,19 @@ describe('Blog app', () => {
 
         await page.getByRole('button', { name: 'show' }).click()
         await likeBtn.click()
-        await expect(likeBtnContainer.getByText('1')).toBeVisible()
+        await expect(likeBtnContainer.getByText(1)).toBeVisible()
+      })
+
+      test('can be liked multiple times', async ({ page }) => {
+        const likeBtn = await page.getByRole('button', { name: 'like' }).last()
+        const likeBtnContainer = await likeBtn.locator('..')
+        let likeCount = 0
+        await page.getByRole('button', { name: 'show' }).click()
+        for (let i = 0; i < 5; i++) {
+          await likeBtn.click()
+          likeCount = likeCount + 1
+          await expect(likeBtnContainer.getByText(likeCount)).toBeVisible()
+        }
       })
 
       test('user who added the blog can delete the blog', async ({ page }) => {
@@ -93,6 +105,45 @@ describe('Blog app', () => {
 
         await page.getByRole('button', { name: 'show' }).click()
         await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
+      })
+    })
+
+    describe('and multiple blogs exists', () => {
+      beforeEach(async ({ page, request }) => {
+        await createBlog(page, 'first blog', 'john doe', 'www.first-blog-test.com')
+        await createBlog(page, 'How to open a cookie jar', 'red velvet', 'www.cookie-jar.com')
+        await createBlog(page, 'BodomOW portfolio', 'marco hernandez', 'www.https://bodomow.github.io/portfolio/')
+      })
+
+      test('blogs are arranged in descending order by likes, most liked first', async ({ page }) => {
+        const blogs = [
+          { title: 'first blog by john doe', likes: 3 },
+          { title: 'How to open a cookie jar by red velvet', likes: 0 },
+          { title: 'BodomOW portfolio by marco hernandez', likes: 1 }
+        ]
+
+        // Like the blogs as specified
+        for (const blog of blogs) {
+          const blogElement = await page.getByText(blog.title).last().locator('..')
+          await blogElement.getByRole('button', { name: 'show' }).click()
+          const likeBtn = blogElement.getByRole('button', { name: 'like' })
+          for (let i = 0; i < blog.likes; i++) {
+            await likeBtn.click()
+            await expect(blogElement.getByText((i + 1).toString())).toBeVisible()
+          }
+        }
+
+        // Sort blogs by likes
+        await page.getByRole('button', { name: 'Sort by likes' }).click()
+
+        // Get all blog like counts after sorting
+        const likeCounts = await page.locator('.blog-content .likes-count').allTextContents()
+        const parsedLikes = likeCounts.map(text => parseInt(text, 10))
+
+        // Assert descending order
+        for (let i = 0; i < parsedLikes.length - 1; i++) {
+          expect(parsedLikes[i]).toBeGreaterThanOrEqual(parsedLikes[i + 1])
+        }
       })
     })
 

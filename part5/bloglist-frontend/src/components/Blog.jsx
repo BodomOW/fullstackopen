@@ -23,7 +23,7 @@ const Blog = ({ blog, updateLike, remove, user }) => {
       <p>{blog.title} by {blog.author} <button onClick={() => setShowInfo(!showInfo)}>{btnText}</button></p>
       <div style={showWhenVisible} className='blog-content'>
         <p>{blog.url}</p>
-        <p>{blog.likes} <button onClick={addLike}>like</button></p>
+        <p>{blog.likes} <button onClick={addLike} className='btn-like'>like</button></p>
         <p>{blog.user.name}</p>
         <button className='remove' style={showRemoveBtn} onClick={() => remove(blog.id, blog.title, blog.author)}>remove</button>
       </div>
