@@ -36,7 +36,7 @@ const reducer = (state = initialState, action) => {
       )
     }
     case 'NEW_ANECDOTE':
-      return [...state, action.data]
+      return [...state, action.data].sort((a, b) => b.votes - a.votes)
     default:
       return state
   }
