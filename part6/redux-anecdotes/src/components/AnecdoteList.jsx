@@ -3,7 +3,7 @@ import { vote } from '../reducers/anecdoteReducer'
 
 const Anecdote = ({ anecdote, handleClick }) => {
   return (
-    <li key={anecdote.id}>
+    <li id={anecdote.id}>
       <div>
         {anecdote.content}
       </div>
