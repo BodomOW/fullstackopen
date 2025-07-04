@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
   Link,
-  Navigate,
   useNavigate,
   useMatch
 } from "react-router-dom"
@@ -20,6 +19,19 @@ const Menu = () => {
       <Link to='/about' style={padding}>about</Link>
     </nav>
   )
+}
+
+const Notification = ({ notification }) => {
+  const style = {
+    border: '2px solid #4caf50',
+    backgroundColor: '#e8f5e9',
+    color: '#256029',
+    padding: '10px 15px',
+    borderRadius: '5px',
+    margin: '10px 0',
+    fontWeight: 'bold'
+  }
+  return notification ? <div style={style}>{notification}</div> : null
 }
 
 const Anecdote = ({ anecdote }) => {
@@ -59,6 +71,7 @@ const About = () => (
 
 const Footer = () => (
   <footer>
+    <br />
     Anecdote app for <a href='https://fullstackopen.com/'>Full Stack Open</a>.
 
     See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js</a> for the source code.
@@ -66,6 +79,8 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
+  const navigate = useNavigate()
+
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
@@ -79,6 +94,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
   }
 
   return (
@@ -97,7 +113,8 @@ const CreateNew = (props) => {
           url for more info
           <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
         </div>
-        <button>create</button>
+        <br />
+        <button type="submit">create</button>
       </form>
     </div>
   )
@@ -124,6 +141,8 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  console.log('notification', notification)
+
   const match = useMatch('/anecdotes/:id')
 
   const anecdote = match
@@ -133,6 +152,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
   }
 
   const anecdoteById = (id) =>
@@ -153,6 +176,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
