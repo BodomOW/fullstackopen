@@ -116,6 +116,11 @@ const CreateNew = (props) => {
         </div>
         <br />
         <button type="submit">create</button>
+        <button type="button" onClick={() => {
+          content.onReset()
+          author.onReset()
+          info.onReset()
+        }}>clear</button>
       </form>
     </div>
   )
@@ -141,8 +146,6 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
-
-  console.log('notification', notification)
 
   const match = useMatch('/anecdotes/:id')
 
