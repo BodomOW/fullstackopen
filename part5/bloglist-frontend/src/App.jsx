@@ -1,11 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+
 import loginService from './services/login'
 import blogService from './services/blogs'
-import AlertMessage from './components/AlertMessage'
-import Togglable from './components/Togglable'
-import BlogForm from './components/BlogForm'
+
+import Header from './components/Header'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
+import Blog from './components/Blog'
+
+import { setNotification } from './reducers/notificationReducer'
+
+import { initializeBlogs } from './reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,20 +20,28 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [sortDesc, setSortDesc] = useState(false)
-  const [alertMessage, setAlertMessage] = useState(null)
+  // const [notification, setNotification] = useState(null)
   const blogFormRef = useRef()
 
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs(blogs)
+  //   )
+  // }, [])
+
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      console.log(user.username)
+      dispatch(setUser(user.username))
+
       blogService.setToken(user.token)
     }
   }, [])
@@ -46,13 +61,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setAlertMessage({
+      dispatch(setNotification({
         text: 'wrong credentials',
         status: 'error'
-      })
-      setTimeout(() => {
-        setAlertMessage(null)
-      }, 5000)
+      }, 5))
     }
   }
 
@@ -68,13 +80,10 @@ const App = () => {
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat({ ...returnedBlog, user: user }))
-        setAlertMessage({
+        dispatch(setNotification({
           text: `new blog: ${returnedBlog.title} by ${returnedBlog.author} has been added`,
           status: 'success'
-        })
-        setTimeout(() => {
-          setAlertMessage(null)
-        }, 5000)
+        }, 5))
       })
   }
 
@@ -100,17 +109,6 @@ const App = () => {
         .then(setBlogs(blogs.filter(blog => blog.id !== id)))
     }
   }
-
-  const Header = () => (
-    <>
-      {user === null
-        ? <h2>log in to application</h2>
-        : <h2>blogs</h2>
-      }
-      <AlertMessage message={alertMessage} />
-    </>
-  )
-
 
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
