@@ -1,7 +1,8 @@
 // import { useSelector } from 'react-redux'
 
 // const BlogList = () => {
-//   const user = useSelector(state => state.login.user)
+//   const blogs = useSelector(state => state.blogs)
+//   const user = useSelector(state => state.login)
 //   console.log('user in BlogList:', user)
 //   return (
 //     <>

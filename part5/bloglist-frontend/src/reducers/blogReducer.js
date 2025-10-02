@@ -35,7 +35,7 @@ export const initializeBlogs = () => {
 
 export const createBlog = content => {
   return async dispatch => {
-    const newBlog = await blogsService.createNew(content)
+    const newBlog = await blogsService.create(content)
     dispatch(appendBlog(newBlog))
   }
 }
@@ -48,5 +48,4 @@ export const voteBlog = id => {
 }
 
 export const { setBlogs, appendBlog, vote } = blogSlice.actions
-
 export default blogSlice.reducer
