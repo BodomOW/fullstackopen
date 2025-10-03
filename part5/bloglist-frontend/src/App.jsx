@@ -10,7 +10,7 @@ import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 
 import { setUser, setUsername, setPassword, clearUser } from './reducers/loginReducer'
-import { setBlogs, createBlog } from './reducers/blogReducer'
+import { setBlogs } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
 
 import { initializeBlogs } from './reducers/blogReducer'
@@ -28,9 +28,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
-  }, [dispatch])
 
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -38,7 +36,7 @@ const App = () => {
 
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -72,7 +70,7 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        dispatch(createBlog({ ...returnedBlog, user: login.user.username }))
+        dispatch(setBlogs(blogs.concat({ ...returnedBlog, user: login.user })))
         dispatch(setNotification({
           text: `new blog: ${returnedBlog.title} by ${returnedBlog.author} has been added`,
           status: 'success'

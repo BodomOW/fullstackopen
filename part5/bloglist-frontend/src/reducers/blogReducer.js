@@ -8,9 +8,6 @@ const blogSlice = createSlice({
     setBlogs(state, action) {
       return action.payload
     },
-    appendBlog(state, action) {
-      state.push(action.payload)
-    },
     vote(state, action) {
       const currentState = current(state)
       const id = action.payload.id
@@ -30,20 +27,6 @@ export const initializeBlogs = () => {
   return async dispatch => {
     const blogs = await blogsService.getAll()
     dispatch(setBlogs(blogs))
-  }
-}
-
-export const createBlog = content => {
-  return async dispatch => {
-    const newBlog = await blogsService.create(content)
-    dispatch(appendBlog(newBlog))
-  }
-}
-
-export const voteBlog = id => {
-  return async dispatch => {
-    const updatedBlog = await blogsService.voteFor(id)
-    dispatch(vote(updatedBlog))
   }
 }
 
