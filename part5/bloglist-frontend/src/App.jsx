@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import loginService from './services/login'
 import blogService from './services/blogs'
@@ -21,11 +22,13 @@ import { useSelector } from 'react-redux'
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const login = useSelector(state => state.login)
-  console.log('login state in App:', login)
   const [sortDesc, setSortDesc] = useState(false)
   const blogFormRef = useRef()
 
   const dispatch = useDispatch()
+
+  // const state = useSelector(state => state)
+  // console.log('state now: ', state)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -120,10 +123,35 @@ const App = () => {
     </>
   )
 
+  const usersList = () => (
+    <>
+      <h1>Users</h1>
+      <table>
+        <thead style={{ textAlign: 'left' }}>
+          <tr>
+            <th>Name</th>
+            <th>Blogs Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            blogs.map(blog => blog.user.name).filter((value, index, self) => self.indexOf(value) === index).map((name, idx) =>
+              <tr key={idx}>
+                <td>{name}</td>
+                <td>{blogs.filter(blog => blog.user.name === name).length}</td>
+              </tr>
+            )
+          }
+        </tbody>
+      </table>
+    </>
+  )
+
 
   return (
     <>
       <Header />
+
       {login.user === null
         ? <LoginForm
           username={login.username}
@@ -132,7 +160,13 @@ const App = () => {
           handlePasswordChange={({ target }) => dispatch(setPassword(target.value))}
           handleSubmit={handleLogin}
         />
-        : blogList()
+        :
+        <Router>
+          <Routes>
+            <Route path="/users" element={usersList()} />
+            <Route path="/" element={blogList()} />
+          </Routes>
+        </Router>
       }
     </>
   )
