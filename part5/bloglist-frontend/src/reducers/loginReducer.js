@@ -7,12 +7,6 @@ const loginSlice = createSlice({
     setUser(state, action) {
       return { ...state, user: action.payload }
     },
-    setUsername(state, action) {
-      return { ...state, username: action.payload }
-    },
-    setPassword(state, action) {
-      return { ...state, password: action.payload }
-    },
     clearUser(state, action) {
       return { user: null, username: '', password: '' }
     }

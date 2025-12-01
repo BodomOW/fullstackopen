@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
 
 const LoginForm = ({ username, password, handleUsernameChange, handlePasswordChange, handleSubmit }) => (
   <form onSubmit={handleSubmit}>

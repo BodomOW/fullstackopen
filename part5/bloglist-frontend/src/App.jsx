@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux'
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const login = useSelector(state => state.login)
+  console.log('login state in App:', login)
   const [sortDesc, setSortDesc] = useState(false)
   const blogFormRef = useRef()
 
