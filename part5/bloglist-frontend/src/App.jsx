@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Routes, Route, useMatch, Link } from 'react-router-dom'
 
 import loginService from './services/login'
@@ -22,7 +22,6 @@ import { useSelector } from 'react-redux'
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const login = useSelector(state => state.login)
-  const [sortDesc, setSortDesc] = useState(false)
   const blogFormRef = useRef()
 
   const dispatch = useDispatch()
@@ -90,12 +89,6 @@ const App = () => {
       })
   }
 
-  const handleSort = () => {
-    setSortDesc(!sortDesc)
-    const sortedBlogs = sortDesc ? blogs.toSorted((a, b) => b.likes - a.likes) : blogs.toSorted((a, b) => a.likes - b.likes)
-    dispatch(setBlogs(sortedBlogs))
-  }
-
   const handleDelete = (id, title, author) => {
     const text = `Delete ${title} by ${author} ?`
     if (confirm(text) === true) {
@@ -116,7 +109,6 @@ const App = () => {
       <p>{login.user.name} logged in <button onClick={handleLogout}>logout</button></p>
       <h2>Create new</h2>
       {blogForm()}
-      <button className='btn-sort' onClick={handleSort}>Sort by likes {sortDesc ? '↓' : '↑'}</button>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
