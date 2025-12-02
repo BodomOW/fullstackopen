@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route, useMatch, Link } from 'react-router-dom'
 
 import loginService from './services/login'
 import blogService from './services/blogs'
@@ -135,18 +135,49 @@ const App = () => {
         </thead>
         <tbody>
           {
-            blogs.map(blog => blog.user.name).filter((value, index, self) => self.indexOf(value) === index).map((name, idx) =>
-              <tr key={idx}>
-                <td>{name}</td>
-                <td>{blogs.filter(blog => blog.user.name === name).length}</td>
+            Object.entries(
+              blogs.reduce((acc, blog) => {
+                const { name, id } = blog.user
+                if (!acc[name]) {
+                  acc[name] = { count: 0, userId: id }
+                }
+                acc[name].count++
+                return acc
+              }, {})
+            ).map(([name, { count, userId }]) => (
+              <tr key={name}>
+                <td><Link to={`/users/${userId}`}>{name}</Link></td>
+                <td>{count}</td>
               </tr>
-            )
+            ))
           }
         </tbody>
       </table>
     </>
   )
 
+  const match = useMatch('/users/:id')
+
+  const user = match
+    ? (blogs.find(blog => blog.user.id === match.params.id))?.user
+    : null
+
+  console.log('user ', user)
+
+  const UserBlogs = () => {
+    const userId = user?.id
+    const userBlogs = blogs.filter(b => b.user.id === userId)
+
+    return (
+      <div>
+        <h2>{user?.name}</h2>
+        <h3>Added blogs</h3>
+        <ul>
+          {userBlogs.map(b => <li key={b.id}>{b.title}</li>)}
+        </ul>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -161,12 +192,11 @@ const App = () => {
           handleSubmit={handleLogin}
         />
         :
-        <Router>
-          <Routes>
-            <Route path="/users" element={usersList()} />
-            <Route path="/" element={blogList()} />
-          </Routes>
-        </Router>
+        <Routes>
+          <Route path="/users" element={usersList()} />
+          <Route path="/users/:id" element={<UserBlogs />} />
+          <Route path="/" element={blogList()} />
+        </Routes>
       }
     </>
   )

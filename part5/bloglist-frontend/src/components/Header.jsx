@@ -9,7 +9,7 @@ const Header = () => {
     <>
       {user === null
         ? <h2>log in to application</h2>
-        : <h2>blogService</h2>
+        : <h2>blogs</h2>
       }
       <Notification />
     </>
