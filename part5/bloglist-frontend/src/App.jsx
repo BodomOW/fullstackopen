@@ -118,7 +118,7 @@ const App = () => {
       {blogForm()}
       <button className='btn-sort' onClick={handleSort}>Sort by likes {sortDesc ? '↓' : '↑'}</button>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateLike={addLike} remove={handleDelete} user={login.user.name} />
+        <Blog key={blog.id} blog={blog} />
       )}
     </>
   )
@@ -156,15 +156,13 @@ const App = () => {
     </>
   )
 
-  const match = useMatch('/users/:id')
-
-  const user = match
-    ? (blogs.find(blog => blog.user.id === match.params.id))?.user
-    : null
-
-  console.log('user ', user)
-
   const UserBlogs = () => {
+    const match = useMatch('/users/:id')
+
+    const user = match
+      ? (blogs.find(blog => blog.user.id === match.params.id))?.user
+      : null
+
     const userId = user?.id
     const userBlogs = blogs.filter(b => b.user.id === userId)
 
@@ -176,6 +174,35 @@ const App = () => {
           {userBlogs.map(b => <li key={b.id}>{b.title}</li>)}
         </ul>
       </div>
+    )
+  }
+
+  const BlogView = ({ updateLike }) => {
+    const match = useMatch('/blogs/:id')
+    const blogId = match.params.id
+    const blog = blogs.find(b => b.id === blogId)
+
+    if (!blog) return null
+
+    const addLike = (event) => {
+      event.preventDefault()
+      updateLike(blog.id, {
+        ...blog,
+        user: { ...blog.user },
+        likes: blog.likes + 1
+      })
+    }
+
+    return (
+      <>
+        <h2>{blog.title} by {blog.author}</h2>
+        <a href={blog.url}>{blog.url}</a>
+        <div>{blog.likes} likes <button onClick={addLike}>like</button></div>
+        <div>added by {blog.user.name}</div>
+        {login.user.name === blog.user.name &&
+          <button onClick={() => handleDelete(blog.id, blog.title, blog.author)}>remove</button>
+        }
+      </>
     )
   }
 
@@ -195,6 +222,7 @@ const App = () => {
         <Routes>
           <Route path="/users" element={usersList()} />
           <Route path="/users/:id" element={<UserBlogs />} />
+          <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
           <Route path="/" element={blogList()} />
         </Routes>
       }
