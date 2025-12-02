@@ -99,15 +99,13 @@ const App = () => {
   }
 
   const blogForm = () => (
-    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+    <Togglable buttonLabel='Create new' ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
   const blogList = () => (
     <>
-      <p>{login.user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <h2>Create new</h2>
       {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
@@ -200,8 +198,6 @@ const App = () => {
 
   return (
     <>
-      <Header />
-
       {login.user === null
         ? <LoginForm
           username={login.username}
@@ -211,12 +207,20 @@ const App = () => {
           handleSubmit={handleLogin}
         />
         :
-        <Routes>
-          <Route path="/users" element={usersList()} />
-          <Route path="/users/:id" element={<UserBlogs />} />
-          <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
-          <Route path="/" element={blogList()} />
-        </Routes>
+        <>
+          <nav>
+            <Link to="/">Blogs</Link>
+            <Link to="/users">Users</Link>
+            <p>{login.user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          </nav>
+          <Header />
+          <Routes>
+            <Route path="/" element={blogList()} />
+            <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
+            <Route path="/users" element={usersList()} />
+            <Route path="/users/:id" element={<UserBlogs />} />
+          </Routes>
+        </>
       }
     </>
   )
