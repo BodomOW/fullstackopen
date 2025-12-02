@@ -4,11 +4,11 @@ import { Routes, Route, useMatch, Link } from 'react-router-dom'
 import loginService from './services/login'
 import blogService from './services/blogs'
 
-import Header from './components/Header'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 
 import { setUser, setUsername, setPassword, clearUser } from './reducers/loginReducer'
 import { setBlogs } from './reducers/blogReducer'
@@ -199,13 +199,16 @@ const App = () => {
   return (
     <>
       {login.user === null
-        ? <LoginForm
-          username={login.username}
-          password={login.password}
-          handleUsernameChange={({ target }) => dispatch(setUsername(target.value))}
-          handlePasswordChange={({ target }) => dispatch(setPassword(target.value))}
-          handleSubmit={handleLogin}
-        />
+        ? <>
+          <h2>log in to application</h2>
+          <LoginForm
+            username={login.username}
+            password={login.password}
+            handleUsernameChange={({ target }) => dispatch(setUsername(target.value))}
+            handlePasswordChange={({ target }) => dispatch(setPassword(target.value))}
+            handleSubmit={handleLogin}
+          />
+        </>
         :
         <>
           <nav>
@@ -213,7 +216,8 @@ const App = () => {
             <Link to="/users">Users</Link>
             <p>{login.user.name} logged in <button onClick={handleLogout}>logout</button></p>
           </nav>
-          <Header />
+          <h2>blog app</h2>
+          <Notification />
           <Routes>
             <Route path="/" element={blogList()} />
             <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
