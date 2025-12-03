@@ -167,6 +167,46 @@ const App = () => {
     )
   }
 
+  const BlogComments = ({ blog }) => {
+    const commentRef = useRef()
+
+    const addComment = (event) => {
+      event.preventDefault()
+      const commentText = commentRef.current.value
+
+      blogService
+        .addComment(blog.id, { text: commentText })
+        .then(returnedBlog => {
+          dispatch(setBlogs(blogs.map(b => b.id !== blog.id ? b : { ...returnedBlog, user: blog.user })))
+          commentRef.current.value = ''
+        })
+    }
+
+    return (
+      <div className="comments">
+        <h3>Comments</h3>
+        <form onSubmit={addComment} className="comments_form">
+          <textarea ref={commentRef} />
+          <button type="submit">Add comment</button>
+        </form>
+        <ul className="comments_list">
+          {blog.comments.map((comment, index) =>
+            <li key={index}>
+              <small>{new Date(comment.date).toLocaleString(undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</small>
+              <p>{comment.text}</p>
+            </li>
+          )}
+        </ul>
+      </div>
+    )
+  }
+
   const BlogView = ({ updateLike }) => {
     const match = useMatch('/blogs/:id')
     const blogId = match.params.id
@@ -192,6 +232,7 @@ const App = () => {
         {login.user.name === blog.user.name &&
           <button onClick={() => handleDelete(blog.id, blog.title, blog.author)}>remove</button>
         }
+        <BlogComments blog={blog} />
       </>
     )
   }
@@ -216,14 +257,16 @@ const App = () => {
             <Link to="/users">Users</Link>
             <p>{login.user.name} logged in <button onClick={handleLogout}>logout</button></p>
           </nav>
-          <h2>blog app</h2>
-          <Notification />
-          <Routes>
-            <Route path="/" element={blogList()} />
-            <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
-            <Route path="/users" element={usersList()} />
-            <Route path="/users/:id" element={<UserBlogs />} />
-          </Routes>
+          <div className='container'>
+            <h2>blog app</h2>
+            <Notification />
+            <Routes>
+              <Route path="/" element={blogList()} />
+              <Route path="/blogs/:id" element={<BlogView updateLike={addLike} />} />
+              <Route path="/users" element={usersList()} />
+              <Route path="/users/:id" element={<UserBlogs />} />
+            </Routes>
+          </div>
         </>
       }
     </>

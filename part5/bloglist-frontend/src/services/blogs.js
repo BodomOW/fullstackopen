@@ -26,9 +26,14 @@ const addLike = (id, newObject) => {
   return request.then(response => response.data)
 }
 
+const addComment = (id, commentObject) => {
+  const request = axios.put(`${baseUrl}/${id}/comments`, commentObject)
+  return request.then(response => response.data)
+}
+
 const remove = id => {
   const request = axios.delete(`${baseUrl}/${id}`)
   return request
 }
 
-export default { setToken, getAll, create, addLike, remove }
+export default { setToken, getAll, create, addLike, addComment, remove }

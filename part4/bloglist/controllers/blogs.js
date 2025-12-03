@@ -59,6 +59,22 @@ blogsRouter.put('/:id', async (request, response) => {
   response.status(200).json(updatedBlog)
 })
 
+blogsRouter.put('/:id/comments', async (request, response) => {
+  const body = request.body
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    {
+      $push: {
+        comments: { text: body.text, date: new Date() }
+      }
+    },
+    { new: true }
+  )
+
+  response.status(200).json(updatedBlog)
+})
+
 blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
