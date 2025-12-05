@@ -94,10 +94,6 @@ let books = [
   },
 ]
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
-
 const typeDefs = /* GraphQL */ `
   type Author {
     name: String!
@@ -126,6 +122,11 @@ const typeDefs = /* GraphQL */ `
       published: Int!
       genres: [String!]!
     ): Book
+
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
   }
 `
 
@@ -156,6 +157,9 @@ const resolvers = {
       })
     },
   },
+  Author: {
+    bookCount: (root) => books.filter(book => book.author === root.name).length
+  },
   Mutation: {
     addBook: (root, args) => {
       const authorExists = authors.find((author) => author.name === args.author)
@@ -166,6 +170,15 @@ const resolvers = {
       const book = { ...args, id: uuidv4() }
       books = books.concat(book)
       return book
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find((a) => a.name === args.name)
+      if (!author) {
+        return null
+      }
+      const updatedAuthor = { ...author, born: args.setBornTo }
+      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a))
+      return updatedAuthor
     }
   }
 }
