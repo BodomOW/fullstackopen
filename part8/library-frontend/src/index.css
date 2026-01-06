@@ -1,0 +1,66 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+ul {
+  padding-left: 0;
+}
+li {
+  list-style: none;
+}
+
+/* Main style */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+nav {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+  background-color: rgb(216, 216, 216);
+  padding: 0.5em 1em;
+}
+.container {
+  padding: 1em;
+}
+
+nav > p {
+  margin: 0 0 0 auto;
+}
+
+h1 {
+  color: green;
+  font-style: italic;
+}
+
+.success, .error {
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.success {
+  color: green;
+}
+.error {
+  color: red;
+}
+.remove{
+  background-color: rgb(177, 16, 16);
+  border: transparent;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: white;
+  cursor: pointer;
+}
+
+th {
+  text-align: left;
+}
+tr > * {
+  padding: 0.25em 2em 0.25em 0;
+}
