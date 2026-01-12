@@ -1,20 +1,22 @@
 import { useQuery } from '@apollo/client/react'
 import { Routes, Route, Link } from 'react-router-dom'
 
-import { ALL_AUTHORS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
 const App = () => {
-  const result = useQuery(ALL_AUTHORS)
+  const authorsResult = useQuery(ALL_AUTHORS)
+  const booksResult = useQuery(ALL_BOOKS)
 
-  if (result.loading) {
+  if (authorsResult.loading || booksResult.loading) {
     return <div>loading...</div>
   }
 
-  console.log(result.data)
+  console.log(authorsResult.data)
+  console.log(booksResult.data)
 
   return (
     <>
@@ -26,10 +28,10 @@ const App = () => {
 
       <div className="container">
         <Routes>
-          <Route path="/authors" element={<Authors authors={result.data.allAuthors} />} />
-          <Route path="/books" element={<Books />} />
+          <Route path="/authors" element={<Authors authors={authorsResult.data.allAuthors} />} />
+          <Route path="/books" element={<Books books={booksResult.data.allBooks} />} />
           <Route path="/add" element={<NewBook />} />
-          <Route index element={<Authors authors={result.data.allAuthors} />} />
+          <Route index element={<Authors authors={authorsResult.data.allAuthors} />} />
         </Routes>
       </div>
     </>

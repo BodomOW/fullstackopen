@@ -1,6 +1,4 @@
-const Books = () => {
-  const books = []
-
+const Books = ({ books }) => {
   return (
     <div>
       <h2>Books</h2>
@@ -12,11 +10,11 @@ const Books = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author}</td>
-              <td>{a.published}</td>
+          {books.map((b) => (
+            <tr key={b.id}>
+              <td>{b.title}</td>
+              <td>{b.author}</td>
+              <td>{b.published}</td>
             </tr>
           ))}
         </tbody>
