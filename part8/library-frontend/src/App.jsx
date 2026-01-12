@@ -15,9 +15,6 @@ const App = () => {
     return <div>loading...</div>
   }
 
-  console.log(authorsResult.data)
-  console.log(booksResult.data)
-
   return (
     <>
       <nav>

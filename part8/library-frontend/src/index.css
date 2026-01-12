@@ -64,3 +64,9 @@ th {
 tr > * {
   padding: 0.25em 2em 0.25em 0;
 }
+
+.field_group{
+  display: flex;
+  gap: 0.25em;
+  margin-bottom: 0.5em;
+}
