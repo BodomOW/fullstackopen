@@ -122,13 +122,9 @@ const resolvers = {
         author = authorExists
       }
 
-      console.log('AUTHOR:', author)
-
       const book = new Book({ ...args, author: author._id })
-      console.log('BOOK:', book)
 
       try {
-        console.log('SAVING BOOK...')
         await book.populate('author')
         await book.save()
       } catch (error) {
