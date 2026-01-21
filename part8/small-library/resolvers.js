@@ -12,17 +12,44 @@ const resolvers = {
     allBooks: async (root, args) => {
       let query = {}
 
-      if (args.genre) {
-        query.genres = { $in: [args.genre] }
-      }
+      console.log('args:', args)
 
-      if (args.name) {
-        const author = await Author.findOne({ name: args.name })
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+        console.log('found author:', author)
         if (author) {
           query.author = author._id
-        } else {
-          return [] // No author found with that name
         }
+      }
+
+      if (args.bookCount) {
+        const authorsWithBookCount = await Author.aggregate([
+          {
+            $lookup: {
+              from: 'books',
+              localField: '_id',
+              foreignField: 'author',
+              as: 'books'
+            }
+          },
+          {
+            $addFields: {
+              bookCount: { $size: '$books' }
+            }
+          },
+          {
+            $match: {
+              bookCount: args.bookCount
+            }
+          }
+        ])
+
+        const authorIds = authorsWithBookCount.map(author => author._id)
+        query.author = { $in: authorIds }
+      }
+
+      if (args.genre) {
+        query.genres = { $in: [args.genre] }
       }
 
       return await Book.find(query).populate('author')

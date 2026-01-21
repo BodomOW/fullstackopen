@@ -18,8 +18,18 @@ const query = gql`
   query {
     allAuthors {
       name
-      born
       bookCount
+      born
+    }
+    allBooks {
+      title
+      author {
+        name
+        bookCount
+        born
+      }
+      published
+      genres
     }
   }
 `
