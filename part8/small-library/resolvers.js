@@ -12,8 +12,6 @@ const resolvers = {
     allBooks: async (root, args) => {
       let query = {}
 
-      console.log('args:', args)
-
       if (args.author) {
         const author = await Author.findOne({ name: args.author })
         console.log('found author:', author)
@@ -135,9 +133,9 @@ const resolvers = {
       if (!author) {
         return null
       }
-      const updatedAuthor = new Author({ ...author, born: args.setBornTo })
+      author.born = args.setBornTo
       try {
-        await updatedAuthor.save()
+        await author.save()
       } catch (error) {
         throw new GraphQLError(`Saving author failed: ${error.message}`, {
           extensions: {
@@ -147,7 +145,7 @@ const resolvers = {
           }
         })
       }
-      return updatedAuthor
+      return author
     },
     createUser: async (root, args) => {
       const user = new User({ ...args })
